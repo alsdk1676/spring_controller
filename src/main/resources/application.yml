@@ -17,3 +17,12 @@ spring:
       jdbc-url: jdbc:oracle:thin:@//localhost:1521/XE
       username: hr
       password: 1234
+
+
+thymeleaf:
+  prefix=classpath: templates/
+  suffix: .html
+  check-template-location: true
+  cache: false
+  mvc:
+    static-path-pattern: "/static/**"

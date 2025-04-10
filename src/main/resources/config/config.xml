@@ -6,6 +6,6 @@
     </settings>
 
     <typeAliases>
-
+        <typeAlias type="com.app.controller.domain.MemberVO" alias="MemberVO" />
     </typeAliases>
 </configuration>
