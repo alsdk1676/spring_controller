@@ -1,6 +1,7 @@
 package com.app.controller.controller;
 
 import com.app.controller.domain.MemberVO;
+import com.app.controller.domain.ProductVO;
 import com.app.controller.mapper.MemberMapper;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -60,10 +61,17 @@ public class MemberController {
 //            로그인 성공한 경우
         if(foundMember.isPresent()) {
 //            로그인된 유저의 정보을 세션에 담기
-            session.setAttribute("member", foundMember.get());
+            // "member"에는 memberVO의 메모리 주소값이 들어있음 - hashcode - 상태적
+//            메모리 주소값을 session에 저장하는 건 잘못됨(상대적이라 값이 변함) -> 직렬화로 해결
+//            직렬화 : 세션에 들어가는 값들 , VO, DTO
+            session.setAttribute("member", foundMember.get()); // get() : 옵셔널에서 꺼내옴
+            session.setAttribute("product", new ProductVO());
             return new RedirectView("/post/list");
         }
-//        flash : 리다이렉트되고 데이터 유지 , 새로운 요청 경로를 받았을 때 초기화 됨
+//        flash : 리다이렉트되고 데이터 유지 , 새로운 요청 경로를 받았을 때 초기화 됨 
+//        ex ) login -> mypage : new flash(초기화), login -> login : 그대로 유지
+//        1) 로그인 실패
+//        2) 인증코드
 
 //       ** 로그인 실패 => 세션 이용 ** (실패한 정보도 리다이렉트 시켜줘야함) 쿼리스트링 대신 flash 영역 사용해서 상태값 넘겨줌
 //        session의 flash 영역
@@ -72,7 +80,18 @@ public class MemberController {
 //        따라서 과부화의 부담이 줄어든다.
 
 //        로그인 실패 시 flash가 false 값 가짐
+//        addFlashAttribute를 관리하는 게 redirectAttributes
         redirectAttributes.addFlashAttribute("login", false);
+        redirectAttributes.addFlashAttribute("code", 12345678);
+        return new RedirectView("/member/login");
+    }
+    
+    
+//    로그아웃
+    @GetMapping("logout")
+    public RedirectView logout() {
+//        session.removeAttribute("member"); 
+        session.invalidate(); // 여러 정보를 지울 수 있음
         return new RedirectView("/member/login");
     }
 
